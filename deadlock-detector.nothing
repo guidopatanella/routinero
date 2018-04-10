@@ -1,0 +1,55 @@
+// package routinero
+
+// import (
+	// "fmt"
+	// "routinero"
+	// "strings"
+	// "time"
+// )
+
+// func deadlockDetector() {
+
+// 	syncTime := time.Now()
+// 	detected := false
+// routines:
+// 	for _, routine := range routinero.GetRoutines() {
+// 		if routine.State == "semacquire" {
+// 			for _, stackRow := range routine.Stack {
+// 				// skips if NATS related as wait group causes semacquire
+// 				if strings.Index(stackRow.Function, "nats") > -1 {
+// 					continue routines
+// 				}
+// 			}
+// 			if counter, ok := agent.routineDeadlockCounter[routine.Number]; ok {
+// 				agent.routineDeadlockCounter[routine.Number] = counter + 1
+// 			} else {
+// 				agent.routineDeadlockCounter[routine.Number] = 1
+// 			}
+// 			agent.routineDeadlockTime[routine.Number] = syncTime
+// 			if agent.routineDeadlockCounter[routine.Number] > 1 {
+// 				detected = true
+// 				Agent.AgentState.addDeadlock()
+// 				event(EVENT_SEMACQUIRE, "routine [%d] on state [%s] counter [%d]", routine.Number, routine.State, agent.routineDeadlockCounter[routine.Number])
+// 				logger.Lock("SEMACQUIRE: routine [%d] on state [%s] counter [%d]", routine.Number, routine.State, agent.routineDeadlockCounter[routine.Number])
+// 				for _, stackRow := range routine.Stack {
+// 					event(EVENT_SEMACQUIRE, "	- function [%s], program [%s]", stackRow.Function, stackRow.Program)
+// 					logger.Lock("SEMACQUIRE:	- function [%s], program [%s]", stackRow.Function, stackRow.Program)
+// 				}
+// 			}
+// 		}
+// 	}
+// 	if detected {
+// 		fmt.Printf("%s =======================================================\n", time.Now().Format("15:04:05"))
+// 	}
+// 	// remove the routines that are no longer current
+// 	for k := range agent.routineDeadlockCounter {
+// 		if agent.routineDeadlockTime[k] != syncTime {
+// 			delete(agent.routineDeadlockCounter, k)
+// 			delete(agent.routineDeadlockTime, k)
+// 		}
+// 	}
+// 	agent.routineCounterMutex.Unlock()
+// 	time.Sleep(time.Second * 2)
+// 	// recurr with a go routing to prevent leaks
+// 	go agent.deadlockDetector()
+// }
